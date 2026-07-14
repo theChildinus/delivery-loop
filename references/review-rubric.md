@@ -17,7 +17,8 @@ A Task passes only when all are true:
 8. A direct Git/archive-manifest comparison proves the exact code manifest matches,
    archive order is sequential, delivery artifacts are excluded in code-only mode,
    and archived code files are currently clean.
-9. The Task document records its goal, self-test evidence, regression evidence, review result, and intended commit archive.
+9. The Task document records its goal, scope, planned tests, and intended commit;
+   `state.json` and the canonical review artifact record runtime evidence and verdicts.
 10. No unresolved correctness, security, data integrity, concurrency, compatibility, or operability risk blocks delivery.
 11. No unrelated user changes are overwritten or bundled accidentally.
 12. New Goal artifacts use one Goal-scoped root and lowercase generated paths; no
@@ -28,6 +29,9 @@ A Task passes only when all are true:
     Goal.
 15. Each blocked-to-resumed transition has an immutable `block_history` record with
     its reason, source status, resumed status, and direct resume evidence.
+16. The checkpoint names one next owner and one bounded next action that agrees with
+    the review verdict. A second consecutive FAIL blocks the Task instead of starting
+    another automatic repair round.
 
 ## Review order
 

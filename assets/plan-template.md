@@ -2,8 +2,9 @@
 
 - Goal: GOAL-<NNN>
 - Document mode: small | decomposed
-- Status: awaiting_plan_approval
-- Status history: awaiting_plan_approval
+- State source: `state.json`
+- Dedicated branch:
+- Dedicated worktree:
 - PRD: `prd.md`
 - Design: `design.md`
 
@@ -40,9 +41,10 @@
 | --- | --- | --- |
 | FEATURE-001 |  | TASK-001 |
 
-For small mode, keep the single Task's execution record below and do not create a
+For small mode, keep the single Task's definition below and do not create a
 duplicate Task file. For decomposed mode, keep only the Task index here and place
-each execution record in its linked Task document.
+each Task definition in its linked Task document. Runtime status and evidence belong
+only in `state.json` and canonical review artifacts.
 
 ## Regression strategy
 
@@ -51,7 +53,7 @@ each execution record in its linked Task document.
 - How each later Task expands or reuses the cumulative scope:
 - Goal-level full regression command:
 
-## Small-task execution record
+## Small-task definition
 
 Delete this section in decomposed mode.
 
@@ -66,9 +68,8 @@ Delete this section in decomposed mode.
 <Focused command>
 ```
 
-- Result:
 
-### Cumulative regression
+### Cumulative regression plan
 
 - Earlier completed Tasks covered: none; establish baseline
 
@@ -76,18 +77,7 @@ Delete this section in decomposed mode.
 <Baseline or regression command>
 ```
 
-- Result:
-
-### Review
-
-- Round:
-- Verdict:
-- Artifacts:
-- Blocking findings:
-- Residual risks:
-
-### Local commit archive
+### Intended local commit
 
 - Commit message:
-- Included files:
-- Archive verification:
+- Expected files:

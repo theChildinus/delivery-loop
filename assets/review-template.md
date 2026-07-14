@@ -21,6 +21,8 @@
 
 - <Residual risk, or `None`>
 
-## Worker input for next round
+## Handoff recommendation
 
-1. <Bounded correction, or `None` for PASS>
+- Recommended next owner: worker | orchestrator | user
+- Recommended next action: <One bounded action, or `None` only after Goal acceptance>
+- Resume evidence: <Artifact, command result, or explicit decision needed>

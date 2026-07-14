@@ -1,10 +1,8 @@
 # TASK-<NNN>: <Title>
 
 - Feature: FEATURE-<NNN> | None
-- Status: planned
-- Status history: planned
 - Dependencies: []
-- Base commit:
+- State source: `state.json`
 
 ## Goal
 
@@ -34,7 +32,6 @@
 ```
 
 - Expected evidence:
-- Result:
 
 ## Cumulative regression
 
@@ -45,27 +42,9 @@
 <Regression command>
 ```
 
-- Result:
-
-## Review
-
-- Round:
-- Verdict:
-- Artifacts:
-- Blocking findings:
-- Residual risks:
-
-## Local commit archive
+## Intended local commit
 
 - Commit message: `GOAL-<NNN> TASK-<NNN>: <summary>`
 - Archive mode: `code_only`
 - Included code/test files (never `docs/delivery/**`):
 - Verification: compare `git show --name-only <commit>` with `archive_files`
-
-## Completion evidence
-
-- Changed files:
-- Self-test result:
-- Regression result:
-- Reviewer verdict:
-- Archive verification:

@@ -27,7 +27,9 @@ flowchart LR
   C -->|批准| D[Task Worker 实现]
   D --> E[自测和累计回归]
   E --> F[独立 Reviewer]
-  F -->|FAIL| D
+  F -->|首次 FAIL| D
+  F -->|连续第二次 FAIL| K[阻塞 Task 并请求用户决策]
+  K -->|批准重构、改设计或拆分| D
   F -->|PASS| G[仅代码提交归档]
   G --> H{还有下一个 Task?}
   H -->|是| D
@@ -39,8 +41,9 @@ flowchart LR
 
 ## 文档与提交如何组织
 
-新 Goal 默认使用手工维护的 v7 `code_only` 模式：
+新 Goal 默认使用手工维护的 v8 `code_only` 模式：
 
+- `state.json` 是唯一活动状态源；其中的 checkpoint 明确记录当前 Task、下一责任方、下一动作和恢复证据。
 - 交付文档、状态和 Review artifact 保存在项目本地的 delivery 根目录，用于恢复和审计。
 - 每个 Task 的 Git 提交只包含代码、测试和必要的运行时配置；不包含 `docs/delivery/**`。
 - 每个 Task 完成后，将 Git 提交的精确文件清单与 `state.json` 的 archive manifest 对照，防止把无关改动或交付文档误提交。
@@ -67,8 +70,8 @@ docs/delivery/<goal-id>/
 1. 先定边界，再写代码。计划中明确目标、非目标、验收标准、风险和每个 Task 的依赖；计划未经人工批准，不进入实现。
 2. 按“可独立归档”拆 Task。一个 Task 应有单一责任、可验证的验收标准和独立代码提交。仅因文件多而拆分没有价值。
 3. 先定义证据。每个 Task 开始前写清自测、累计回归和 Review 需要证明什么；不能只以编译通过代替需求验证。
-4. 保持审查独立。一个 Task 可复用同一个 Worker 做修复；每一轮必须使用新的只读 Reviewer。连续两轮 FAIL 后，先重读完整实现并考虑重构、改设计或拆分 Task，再创建新的 Worker。
-5. 直接维护状态，不手工“猜状态”。按 `SKILL.md` 的转换表更新 `state.json`；先产生评审产物或代码提交，再记录对应事实。中断后先比对 `state.json`、Git 和评审产物，只恢复有唯一证据支撑的状态。
+4. 保持审查独立。每一轮必须使用新的只读 Reviewer。首次 FAIL 只允许一次有界修复；连续两轮 FAIL 必须阻塞 Task 并请求用户选择重构、改设计或拆分，不能自动再开 Worker。
+5. 直接维护状态，不手工“猜状态”。先读 checkpoint，再完成它的唯一下一动作，最后记录新事实和新 checkpoint。中断前、等待前和交接前都必须保存 checkpoint 并提示用户；恢复只处理有唯一证据支撑的状态。
 6. 严格暂存代码清单。归档前只暂存本 Task 的代码/测试/运行时配置，并将 `git show --name-only <commit>` 的结果与 `archive_files` 对照；不要把日志、临时文件、用户已有改动或 delivery 文档混入提交。
 7. 每个 Task 都做累计回归。后续 Task 除了自身自测，还要回归已完成 Task 的关键路径，防止“局部绿、整体退化”。
 8. 保留人工决策点。人工至少确认计划、范围或高风险取舍，以及最终验收；推送、部署、数据库写入等外部操作仍需单独确认。
@@ -83,8 +86,8 @@ docs/delivery/<goal-id>/
 
 1. 先让 Codex 只完成需求澄清与计划，并停在“等待批准计划”。
 2. 审阅 `prd.md`、`design.md`、`plan.md` 后，明确回复“批准计划”。
-3. 让它逐个执行 Task；每个 Task 的 Worker、Reviewer、回归和代码提交完成后，再启动下一个。
-4. 任务中断、切换会话或需要继续时，给出 Goal 根目录，并说“使用 delivery-loop 恢复这个 Goal”；它会先检查 `state.json` 与 Git，再继续，而不是重做已经归档的 Task。
+3. 让它逐个执行 Task；每个 Task 的 Worker、Reviewer、回归和代码提交完成后，再启动下一个。任何停顿都会留下 checkpoint，说明下一责任方和下一动作。
+4. 任务中断、切换会话或需要继续时，给出 Goal 根目录，并说“使用 delivery-loop 恢复这个 Goal”；它会先检查 `execution_context`、checkpoint、`state.json` 与 Git，再继续，而不是重做已经归档的 Task。
 5. 最后检查汇总的行为变更、代码提交、验证证据和残余风险；确认后明确回复“验收通过”。推送、PR、发布等仍需要单独授权。
 
 如果希望限制一次工作的范围，可以在 prompt 中追加：`只执行 TASK-002；不要修改 state 以外的交付文档；不要创建远端操作。` 不要只说“继续”，因为它无法表达本轮是否允许实现、验收或发布。
@@ -94,7 +97,8 @@ docs/delivery/<goal-id>/
 
 - 把 Reviewer 当成第二个 Worker：Reviewer 应只读、独立判断，不能边审边改。
 - 将“测试全绿”视为交付完成：Review 应专门检查边界、数据完整性、错误路径和兼容性。
-- 固定两轮 Review：轮次数由发现的问题决定；PASS 即可归档，连续两轮 FAIL 则先回到设计层处理。
+- 在连续第二次 FAIL 后继续自动修复：这会制造死循环；此时必须阻塞并请求用户选择重构、改设计或拆分。
+- 只报告“正在处理”而不写 checkpoint：这会让中断变成猜测；每次停顿必须留下下一责任方、下一动作和恢复证据。
 - 在提交后才整理证据：测试命令、Review artifact 和 manifest 应在归档前完整存在。
 - 把所有需求写进一个超大 Task：这会让回归、审查和回滚失去边界。
 

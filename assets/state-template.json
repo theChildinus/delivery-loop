@@ -1,7 +1,19 @@
 {
-  "schema_version": 7,
+  "schema_version": 8,
   "state_mode": "manual",
   "archive_mode": "code_only",
+  "execution_context": {
+    "branch": "<new dedicated branch>",
+    "worktree_path": "<absolute worktree path>",
+    "base_commit": null
+  },
+  "checkpoint": {
+    "active_task_id": null,
+    "next_owner": "user",
+    "next_action": "Review and explicitly approve plan.md before implementation.",
+    "resume_from": "Read state.json, then plan.md.",
+    "updated_at": null
+  },
   "layout": {
     "delivery_root": "docs/delivery",
     "goal_root": "docs/delivery/goal-001-goal-slug"
@@ -33,6 +45,7 @@
       "base_commit": null,
       "review_round": 0,
       "review_verdict": null,
+      "consecutive_review_failures": 0,
       "review_artifacts": [],
       "review_evidence": [],
       "self_test_evidence": [],
