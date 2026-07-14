@@ -1,0 +1,4 @@
+interface:
+  display_name: "Delivery Loop"
+  short_description: "Turn scoped requirements into reviewed delivery tasks"
+  default_prompt: "Use $delivery-loop to clarify this requirement, create a delivery plan, and stop at the pre-development human gate."
