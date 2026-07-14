@@ -56,49 +56,6 @@ docs/delivery/<goal-id>/
 - 归档前，将 Git 提交的文件清单与 `archive_files` 对照；不提交 `docs/delivery/**`。
 - 默认不推送、不部署、不执行 DDL。需要长期共享交付材料时，另行归档到团队文档库。
 
-## 最佳实践
-
-1. 先批准计划：写清目标、非目标、验收标准和回滚边界，再开始实现。
-2. 一次只推进一个可独立归档的 Task；每个 Task 都要有自测、累计回归和独立 Review。
-3. 只信证据：先生成评审产物或代码提交，再更新 `state.json`；归档只暂存本 Task 的代码文件。
-4. 先读 checkpoint 再继续。中断、等待或交接前更新它；连续第二次 FAIL 必须阻塞并请求用户决定，不自动重试。
-
-## 在 Codex 与 Claude Code 中使用
-
-`SKILL.md` 是两者共用的核心入口。Codex 用户将本目录安装到 Codex skills
-目录；Claude Code 用户将本目录（不含 `.git`）放到下列任一位置：
-
-- 个人安装：`~/.claude/skills/delivery-loop/`
-- 项目共享安装：`<repo>/.claude/skills/delivery-loop/`
-
-重新开启 Claude Code 会话后，可用 `/delivery-loop` 显式调用，也可直接描述符合
-skill 触发条件的交付需求。Claude Code 会同时读取项目中的 `CLAUDE.md`；该 skill
-也会遵守其中的仓库规则。
-
-在新任务的第一条消息一次说清交付边界。推荐模板：
-
-> 使用 `$delivery-loop` 实现“支持按日期范围查询构建缓存命中率”。先输出 PRD、技术设计和 Task 计划，等我批准后再实现；每个 Task 要有自测、独立 Review、累计回归和本地代码提交。不要推送、部署或执行 DDL。
-
-推荐按以下节奏协作：
-
-1. 先让 Codex 只完成需求澄清与计划，并停在“等待批准计划”。
-2. 审阅 `prd.md`、`design.md`、`plan.md` 后，明确回复“批准计划”。
-3. 让它逐个执行 Task；每个 Task 的 Worker、Reviewer、回归和代码提交完成后，再启动下一个。任何停顿都会留下 checkpoint，说明下一责任方和下一动作。
-4. 任务中断、切换会话或需要继续时，给出 Goal 根目录，并说“使用 delivery-loop 恢复这个 Goal”；它会先检查 `execution_context`、checkpoint、`state.json` 与 Git，再继续，而不是重做已经归档的 Task。
-5. 最后检查汇总的行为变更、代码提交、验证证据和残余风险；确认后明确回复“验收通过”。推送、PR、发布等仍需要单独授权。
-
-如果希望限制一次工作的范围，可以在 prompt 中追加：`只执行 TASK-002；不要修改 state 以外的交付文档；不要创建远端操作。` 不要只说“继续”，因为它无法表达本轮是否允许实现、验收或发布。
-
-
-## 常见误区
-
-- 把 Reviewer 当成第二个 Worker：Reviewer 应只读、独立判断，不能边审边改。
-- 将“测试全绿”视为交付完成：Review 应专门检查边界、数据完整性、错误路径和兼容性。
-- 在连续第二次 FAIL 后继续自动修复：这会制造死循环；此时必须阻塞并请求用户选择重构、改设计或拆分。
-- 只报告“正在处理”而不写 checkpoint：这会让中断变成猜测；每次停顿必须留下下一责任方、下一动作和恢复证据。
-- 在提交后才整理证据：测试命令、Review artifact 和 manifest 应在归档前完整存在。
-- 把所有需求写进一个超大 Task：这会让回归、审查和回滚失去边界。
-
 执行细节与强制约束以 [`SKILL.md`](SKILL.md) 为准；本 README 用于帮助使用者判断何时使用、如何组织和如何避免常见流程问题。
 
 ## License
