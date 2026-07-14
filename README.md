@@ -45,6 +45,13 @@ flowchart LR
 
 每个 Goal 使用独立的 `docs/delivery/<goal-id>/` 目录。`state.json` 是唯一活动状态源，checkpoint 说明谁该做下一步、做什么、从哪里恢复。
 
+```text
+docs/delivery/<goal-id>/
+├── prd.md · design.md · plan.md · state.json
+├── tasks/task-<nnn>.md        # 仅 decomposed mode
+└── reviews/task-<nnn>/round-<nn>.md
+```
+
 - 交付文档和 Review artifact 留在本地；代码提交只含代码、测试与运行时配置。
 - 归档前，将 Git 提交的文件清单与 `archive_files` 对照；不提交 `docs/delivery/**`。
 - 默认不推送、不部署、不执行 DDL。需要长期共享交付材料时，另行归档到团队文档库。
