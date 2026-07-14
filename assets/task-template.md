@@ -60,7 +60,7 @@
 - Commit message: `GOAL-<NNN> TASK-<NNN>: <summary>`
 - Archive mode: `code_only`
 - Included code/test files (never `docs/delivery/**`):
-- Verification: `validate_delivery_state.py ... --check-git`
+- Verification: compare `git show --name-only <commit>` with `archive_files`
 
 ## Completion evidence
 

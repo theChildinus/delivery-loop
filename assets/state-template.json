@@ -1,23 +1,15 @@
 {
-  "schema_version": 6,
+  "schema_version": 7,
+  "state_mode": "manual",
   "archive_mode": "code_only",
-  "migration": {
-    "source_schema": null,
-    "legacy_goal": false,
-    "legacy_task_ids": []
-  },
   "layout": {
-    "origin": "goal_scoped",
     "delivery_root": "docs/delivery",
-    "goal_root": "docs/delivery/goal-001-goal-slug",
-    "legacy_document_paths": [],
-    "legacy_review_artifacts": []
+    "goal_root": "docs/delivery/goal-001-goal-slug"
   },
   "goal": {
     "id": "GOAL-001",
     "title": "<Goal title>",
     "status": "awaiting_plan_approval",
-    "history_origin": "native",
     "status_history": ["awaiting_plan_approval"],
     "plan_approved": false,
     "human_gate": true,
@@ -25,13 +17,6 @@
     "plan_path": "docs/delivery/goal-001-goal-slug/plan.md",
     "document_mode": "small",
     "acceptance_evidence": [],
-    "acceptance_origin": null,
-    "acceptance_commit_message": null,
-    "acceptance_files": [],
-    "legacy_v5_digest": null,
-    "legacy_snapshot": null,
-    "legacy_previous_status": null,
-    "legacy_gaps": [],
     "blocked_reason": null
   },
   "features": [],
@@ -41,7 +26,6 @@
       "feature_id": null,
       "title": "<Task title>",
       "status": "planned",
-      "history_origin": "native",
       "status_history": ["planned"],
       "dependencies": [],
       "document_path": "docs/delivery/goal-001-goal-slug/plan.md",
@@ -57,12 +41,6 @@
       "archive_commit_message": null,
       "archive_commit": null,
       "archive_files": [],
-      "archive_origin": null,
-      "legacy_v5_digest": null,
-      "legacy_archive_commit": null,
-      "legacy_snapshot": null,
-      "legacy_previous_status": null,
-      "legacy_gaps": [],
       "blocked_reason": null
     }
   ]

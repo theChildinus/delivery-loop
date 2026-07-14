@@ -39,14 +39,14 @@ flowchart LR
 
 ## 文档与提交如何组织
 
-新 Goal 默认使用 v6 `code_only` 模式：
+新 Goal 默认使用手工维护的 v7 `code_only` 模式：
 
 - 交付文档、状态和 Review artifact 保存在项目本地的 delivery 根目录，用于恢复和审计。
 - 每个 Task 的 Git 提交只包含代码、测试和必要的运行时配置；不包含 `docs/delivery/**`。
-- 每个 Task 完成后执行精确 manifest 校验，防止把无关改动或交付文档误提交。
+- 每个 Task 完成后，将 Git 提交的精确文件清单与 `state.json` 的 archive manifest 对照，防止把无关改动或交付文档误提交。
 - 默认不会推送、部署、执行 DDL 或调用其他会改变外部状态的操作。
 
-这使代码历史保持干净，但本地交付文档默认不会随代码提交跨机器同步。需要长期共享审计材料时，应明确把 delivery 文档纳入团队文档库或另行归档。历史 v5 状态仍按原有审计归档方式兼容处理，详见 [`references/state-compatibility.md`](references/state-compatibility.md)。
+这使代码历史保持干净，但本地交付文档默认不会随代码提交跨机器同步。需要长期共享审计材料时，应明确把 delivery 文档纳入团队文档库或另行归档。该 skill 不需要 Python、额外依赖或状态脚本：Agent 按 `SKILL.md` 中的手工状态转换表直接维护 `state.json`。既有的旧版状态不自动迁移；需要继续时，应先人工核对证据或新建 Goal。
 
 推荐目录采用小写命名，并让不同 Goal 使用不同根目录，避免状态文件和 Review artifact 相互覆盖：
 
@@ -68,8 +68,8 @@ docs/delivery/<goal-id>/
 2. 按“可独立归档”拆 Task。一个 Task 应有单一责任、可验证的验收标准和独立代码提交。仅因文件多而拆分没有价值。
 3. 先定义证据。每个 Task 开始前写清自测、累计回归和 Review 需要证明什么；不能只以编译通过代替需求验证。
 4. 保持审查独立。一个 Task 可复用同一个 Worker 做修复；每一轮必须使用新的只读 Reviewer。连续两轮 FAIL 后，先重读完整实现并考虑重构、改设计或拆分 Task，再创建新的 Worker。
-5. 使用状态脚本，不手工“猜状态”。通过 `start-task`、`record-review`、`archive-task`、`accept-goal` 推进；中断后优先运行 `recover`。脚本的状态写入是原子的，重复执行同一正确操作会返回 `NO-OP`。
-6. 严格暂存代码清单。归档前只暂存本 Task 的代码/测试/运行时配置，随后运行 `validate_delivery_state.py --check-git`；不要把日志、临时文件、用户已有改动或 delivery 文档混入提交。
+5. 直接维护状态，不手工“猜状态”。按 `SKILL.md` 的转换表更新 `state.json`；先产生评审产物或代码提交，再记录对应事实。中断后先比对 `state.json`、Git 和评审产物，只恢复有唯一证据支撑的状态。
+6. 严格暂存代码清单。归档前只暂存本 Task 的代码/测试/运行时配置，并将 `git show --name-only <commit>` 的结果与 `archive_files` 对照；不要把日志、临时文件、用户已有改动或 delivery 文档混入提交。
 7. 每个 Task 都做累计回归。后续 Task 除了自身自测，还要回归已完成 Task 的关键路径，防止“局部绿、整体退化”。
 8. 保留人工决策点。人工至少确认计划、范围或高风险取舍，以及最终验收；推送、部署、数据库写入等外部操作仍需单独确认。
 

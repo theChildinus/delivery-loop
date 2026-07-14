@@ -12,11 +12,11 @@ A Task passes only when all are true:
 4. Focused tests or equivalent checks exercise the changed behavior.
 5. Cumulative regression evidence covers the acceptance criteria of every earlier completed Task, not just the current diff.
 6. Persistent state names every earlier Task in `regression_task_ids` and records direct review evidence, not only a verdict string.
-7. Every review round has a canonical local artifact. In code-only mode it remains
-   outside the code archive; in historical v5 audited mode it is committed.
-8. Git archive validation proves the exact code manifest matches, archive order is
-   sequential, delivery artifacts are excluded in code-only mode, and archived code
-   files are currently clean.
+7. Every review round has a canonical local artifact that remains outside the code
+   archive.
+8. A direct Git/archive-manifest comparison proves the exact code manifest matches,
+   archive order is sequential, delivery artifacts are excluded in code-only mode,
+   and archived code files are currently clean.
 9. The Task document records its goal, self-test evidence, regression evidence, review result, and intended commit archive.
 10. No unresolved correctness, security, data integrity, concurrency, compatibility, or operability risk blocks delivery.
 11. No unrelated user changes are overwritten or bundled accidentally.
@@ -24,8 +24,8 @@ A Task passes only when all are true:
     artifact overwrites or escapes into an accepted historical Goal directory.
 13. The first Task's baseline covers stable behavior from relied-on accepted Goals;
     `regression_task_ids` remains scoped to earlier Tasks in the current Goal.
-14. `archive_files` and `acceptance_files` contain no delivery artifacts owned by a
-    different Goal; legacy uppercase paths are limited to recorded provenance.
+14. `archive_files` contains no delivery artifacts or files owned by a different
+    Goal.
 
 ## Review order
 
