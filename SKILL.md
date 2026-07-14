@@ -19,6 +19,10 @@ product decisions in the main task; delegate only bounded implementation and rev
 4. Do not implement until the user explicitly approves the plan. Do not mark a Goal
    accepted without explicit human acceptance.
 5. Never use destructive Git cleanup commands.
+6. Before implementing every development requirement, isolate it in a newly created
+   Git branch or a newly created Git worktree dedicated to that requirement. Record
+   the selected branch or worktree in the plan, and do not implement on a pre-existing
+   branch or worktree (including the default branch).
 
 ## Artifacts and archive mode
 
