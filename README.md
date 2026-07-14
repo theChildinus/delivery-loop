@@ -63,9 +63,19 @@ docs/delivery/<goal-id>/
 3. 只信证据：先生成评审产物或代码提交，再更新 `state.json`；归档只暂存本 Task 的代码文件。
 4. 先读 checkpoint 再继续。中断、等待或交接前更新它；连续第二次 FAIL 必须阻塞并请求用户决定，不自动重试。
 
-## 在 Codex 中使用
+## 在 Codex 与 Claude Code 中使用
 
-将 Skill 安装在 Codex 可发现的 skills 目录后，在新任务的第一条消息显式调用它，并一次说清交付边界。推荐模板：
+`SKILL.md` 是两者共用的核心入口。Codex 用户将本目录安装到 Codex skills
+目录；Claude Code 用户将本目录（不含 `.git`）放到下列任一位置：
+
+- 个人安装：`~/.claude/skills/delivery-loop/`
+- 项目共享安装：`<repo>/.claude/skills/delivery-loop/`
+
+重新开启 Claude Code 会话后，可用 `/delivery-loop` 显式调用，也可直接描述符合
+skill 触发条件的交付需求。Claude Code 会同时读取项目中的 `CLAUDE.md`；该 skill
+也会遵守其中的仓库规则。
+
+在新任务的第一条消息一次说清交付边界。推荐模板：
 
 > 使用 `$delivery-loop` 实现“支持按日期范围查询构建缓存命中率”。先输出 PRD、技术设计和 Task 计划，等我批准后再实现；每个 Task 要有自测、独立 Review、累计回归和本地代码提交。不要推送、部署或执行 DDL。
 

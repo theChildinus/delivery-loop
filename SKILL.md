@@ -10,8 +10,9 @@ product decisions in the main task; delegate only bounded implementation and rev
 
 ## Non-negotiables
 
-1. Read applicable `AGENTS.md`, resolve the repository/write scope, and preserve
-   unrelated user changes.
+1. Read applicable repository instructions, including `AGENTS.md` and `CLAUDE.md`
+   when present; resolve the repository/write scope and preserve unrelated user
+   changes.
 2. Before a non-trivial write, state the outcome, invariants, non-goals, and evidence
    required for completion.
 3. Treat push, PR creation, CI, deployments, database writes, and remote
@@ -158,12 +159,14 @@ fully recorded and checkpointed.
 
 1. After human plan approval, record the selected Task as `in_progress` with a
    worker-owned checkpoint.
-2. For a non-trivial Task, create one Worker using the packet in
-   `references/subagent-handoff.md`. It changes only the Task and returns evidence,
-   residual risk, and one recommended next action; it never commits, pushes, or edits
-   state/review conclusions.
-3. After Worker evidence exists, create a fresh read-only Reviewer for every round.
-   It returns PASS or FAIL plus one recommended next action; it never edits files.
+2. For a non-trivial Task, create one Worker subagent when the host supports
+   subagents, using the packet in `references/subagent-handoff.md`. It changes only
+   the Task and returns evidence, residual risk, and one recommended next action; it
+   never commits, pushes, or edits state/review conclusions. If subagents are not
+   available, run the Worker role in an isolated fresh context.
+3. After Worker evidence exists, create a fresh read-only Reviewer subagent for every
+   round when supported; otherwise use a separate fresh review context. It returns
+   PASS or FAIL plus one recommended next action; it never edits files.
 4. Write the review artifact first, then record the verdict, evidence, failure count,
    and checkpoint in `state.json`.
 5. On the first FAIL, send only bounded findings to the Worker. On the second
@@ -178,8 +181,9 @@ fully recorded and checkpointed.
 8. On interruption, resume only from the saved checkpoint. If it cannot be verified,
    block and notify the user instead of guessing.
 
-Name agents as runtime labels, for example `goal_001_task_002_worker` and
-`goal_001_task_002_r01_reviewer`; never persist those names in state.
+Use host-native runtime labels for Worker and Reviewer contexts, for example
+`goal_001_task_002_worker` and `goal_001_task_002_r01_reviewer`; never persist those
+names in state.
 
 Never imply push, publish, PR creation, CI, or deployment from a passing review.
 
