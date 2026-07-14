@@ -111,12 +111,12 @@ Apply these transitions exactly:
 
 | Event | Required state update |
 | --- | --- |
-| Initialize | Goal is `awaiting_plan_approval`, `plan_approved: false`; Tasks are `planned` or `blocked` with a non-empty `blocked_reason`. |
+| Initialize | Goal is `awaiting_plan_approval`, `plan_approved: false`; Tasks are `planned` or `blocked`. Every initially blocked entity has a current `blocked_reason` and one open `block_history` record. |
 | Approve and start a Task | Record the explicit plan approval by setting `plan_approved: true`; append Goal `in_progress`. For a `planned` Task, append `ready`, then `in_progress`, set `base_commit` to the current HEAD, and list every earlier completed Task in `regression_task_ids`. A failed-review Task may move back to `in_progress`. Do not start a Task until all earlier Tasks are `done`. |
 | Record review | First create `reviews/<task-id-lower>/round-<nn>.md` with one `PASS` or `FAIL` verdict. Increment `review_round`, append its path to `review_artifacts`, set `review_verdict`, add review/self-test/regression/validation evidence, then append `review_passed` or `review_failed`. |
 | Archive a Task | Only after `review_passed`, commit exactly the Task's code/test/runtime files. Record the exact commit subject, full hash, and file manifest in the archive fields, append `done`, and keep delivery artifacts out of `archive_files`. When every Task is `done`, append Goal `awaiting_acceptance`. |
 | Accept a Goal | Only from `awaiting_acceptance` and only after explicit human acceptance. Append acceptance evidence and Goal `accepted`; do not create a code commit for this metadata. |
-| Block or resume | Set `blocked_reason` before appending `blocked`. Resume only to the state supported by existing evidence; retain the reason as history rather than deleting it. |
+| Block or resume | Before appending `blocked`, append an open object to `block_history` with `reason`, `blocked_from`, and `blocked_at`, and set the same `blocked_reason`. To resume, update the latest open record with `resumed_to`, `resumed_at`, and direct `resume_evidence`; only then clear `blocked_reason` and append the supported target status. Never overwrite an earlier record. |
 | Recover after interruption | Reconcile state with the next review artifact or exactly one matching post-`base_commit` code commit. Record only uniquely supported facts. If proof is missing or ambiguous, block the Task and ask for direction. |
 
 ## Per-Task delivery loop

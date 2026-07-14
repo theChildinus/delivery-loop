@@ -26,6 +26,8 @@ A Task passes only when all are true:
     `regression_task_ids` remains scoped to earlier Tasks in the current Goal.
 14. `archive_files` contains no delivery artifacts or files owned by a different
     Goal.
+15. Each blocked-to-resumed transition has an immutable `block_history` record with
+    its reason, source status, resumed status, and direct resume evidence.
 
 ## Review order
 
